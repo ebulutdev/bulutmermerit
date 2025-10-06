@@ -299,10 +299,38 @@ body {
     opacity: 0.8;
 }
 
-/* Section Headers */
+/* Section Headers - Marble Enhanced */
 .section-header {
     text-align: center;
     margin-bottom: 4rem;
+    position: relative;
+    z-index: 4;
+}
+
+.section-header::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120%;
+    height: 120%;
+    background: 
+        radial-gradient(ellipse, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: -1;
+    animation: headerGlow 8s ease-in-out infinite;
+}
+
+@keyframes headerGlow {
+    0%, 100% {
+        opacity: 0.3;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+        opacity: 0.6;
+        transform: translate(-50%, -50%) scale(1.1);
+    }
 }
 
 .section-header h2 {
@@ -319,10 +347,37 @@ body {
     margin: 0 auto;
 }
 
-/* About Section */
+/* About Section - Marble Background */
 .about {
     padding: 100px 0;
-    background: #f8f9fa;
+    position: relative;
+    background: 
+        linear-gradient(135deg, #f8f9fa 0%, #e9ecef 25%, #dee2e6 50%, #ced4da 75%, #adb5bd 100%);
+    overflow: hidden;
+}
+
+
+.about::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        45deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 70%
+    );
+    animation: marbleShimmer 15s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.about .container {
+    position: relative;
+    z-index: 3;
 }
 
 .about-content {
@@ -387,10 +442,37 @@ body {
     font-size: 0.9rem;
 }
 
-/* Gallery Section */
+/* Gallery Section - Marble Background */
 .gallery {
     padding: 100px 0;
-    background: white;
+    position: relative;
+    background: 
+        linear-gradient(135deg, #ffffff 0%, #f8f9fa 25%, #e9ecef 50%, #dee2e6 75%, #ced4da 100%);
+    overflow: hidden;
+}
+
+
+.gallery::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        -45deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.08) 50%,
+        transparent 70%
+    );
+    animation: marbleShimmer 20s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.gallery .container {
+    position: relative;
+    z-index: 3;
 }
 
 .gallery-grid {
@@ -456,10 +538,37 @@ body {
     opacity: 0.8;
 }
 
-/* Colors Section */
+/* Colors Section - Marble Background */
 .colors {
     padding: 100px 0;
-    background: #f8f9fa;
+    position: relative;
+    background: 
+        linear-gradient(135deg, #f8f9fa 0%, #e9ecef 20%, #dee2e6 40%, #ced4da 60%, #adb5bd 80%, #6c757d 100%);
+    overflow: hidden;
+}
+
+
+.colors::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        60deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.12) 50%,
+        transparent 70%
+    );
+    animation: marbleShimmer 25s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.colors .container {
+    position: relative;
+    z-index: 3;
 }
 
 .colors-grid {
@@ -495,10 +604,37 @@ body {
     color: #2c3e50;
 }
 
-/* Contact Section */
+/* Contact Section - Marble Background */
 .contact {
     padding: 100px 0;
-    background: white;
+    position: relative;
+    background: 
+        linear-gradient(135deg, #ffffff 0%, #f8f9fa 15%, #e9ecef 30%, #dee2e6 45%, #ced4da 60%, #adb5bd 75%, #6c757d 90%, #495057 100%);
+    overflow: hidden;
+}
+
+
+.contact::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        30deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 70%
+    );
+    animation: marbleShimmer 30s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.contact .container {
+    position: relative;
+    z-index: 3;
 }
 
 .contact-content {
@@ -1088,7 +1224,7 @@ input, textarea {
     background: #2980b9;
 }
 
-/* WhatsApp Floating Button */
+/* WhatsApp Floating Button - Marble Effect */
 .whatsapp-float {
     position: fixed;
     bottom: 20px;
@@ -1101,32 +1237,124 @@ input, textarea {
     display: flex;
     align-items: center;
     gap: 8px;
-    background: #25D366;
-    color: white;
+    position: relative;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%);
+    color: #2c3e50;
     padding: 12px 16px;
     border-radius: 25px;
     text-decoration: none;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 14px;
-    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
-    transition: all 0.3s ease;
+    box-shadow: 
+        0 8px 25px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     backdrop-filter: blur(10px);
+    overflow: hidden;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Marble Vein Pattern */
+.whatsapp-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        linear-gradient(45deg, transparent 30%, rgba(108, 117, 125, 0.1) 31%, rgba(108, 117, 125, 0.1) 32%, transparent 33%),
+        linear-gradient(-45deg, transparent 30%, rgba(73, 80, 87, 0.08) 31%, rgba(73, 80, 87, 0.08) 32%, transparent 33%),
+        linear-gradient(90deg, transparent 40%, rgba(52, 58, 64, 0.06) 41%, rgba(52, 58, 64, 0.06) 42%, transparent 43%),
+        radial-gradient(ellipse at 20% 80%, rgba(108, 117, 125, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(73, 80, 87, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 40% 40%, rgba(52, 58, 64, 0.06) 0%, transparent 50%);
+    background-size: 
+        100px 100px,
+        120px 120px,
+        80px 80px,
+        200px 200px,
+        150px 150px,
+        180px 180px;
+    animation: marbleFlow 8s ease-in-out infinite;
+    pointer-events: none;
+}
+
+/* Marble Shimmer Effect */
+.whatsapp-btn::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.3) 50%,
+        transparent 70%
+    );
+    animation: marbleShimmer 3s ease-in-out infinite;
+    pointer-events: none;
 }
 
 .whatsapp-btn:hover {
-    background: #128C7E;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.6);
-    color: white;
+    background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 50%, #ced4da 100%);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 
+        0 12px 35px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+    color: #495057;
     text-decoration: none;
+}
+
+.whatsapp-btn:hover::before {
+    animation-duration: 4s;
+}
+
+.whatsapp-btn:hover::after {
+    animation-duration: 1.5s;
 }
 
 .whatsapp-btn i {
     font-size: 20px;
+    color: #25D366;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 2;
+}
+
+.whatsapp-btn:hover i {
+    color: #128C7E;
+    transform: scale(1.1);
+    transition: all 0.3s ease;
 }
 
 .whatsapp-text {
     font-family: 'Inter', sans-serif;
+    position: relative;
+    z-index: 2;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+
+/* Marble Shimmer Animation */
+@keyframes marbleShimmer {
+    0% {
+        transform: translateX(-100%) translateY(-100%) rotate(45deg);
+        opacity: 0;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        transform: translateX(100%) translateY(100%) rotate(45deg);
+        opacity: 0;
+    }
 }
 
 /* Bounce animation for WhatsApp button */
@@ -1152,6 +1380,10 @@ input, textarea {
     .whatsapp-btn {
         padding: 10px 14px;
         font-size: 13px;
+        box-shadow: 
+            0 6px 20px rgba(0, 0, 0, 0.12),
+            inset 0 1px 0 rgba(255, 255, 255, 0.8),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.1);
     }
     
     .whatsapp-text {
@@ -1172,8 +1404,16 @@ input, textarea {
     .whatsapp-btn {
         padding: 8px 12px;
         border-radius: 50%;
-        width: 50px;
-        height: 50px;
+        width: 55px;
+        height: 55px;
         justify-content: center;
+        box-shadow: 
+            0 8px 25px rgba(0, 0, 0, 0.15),
+            inset 0 1px 0 rgba(255, 255, 255, 0.8),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    }
+    
+    .whatsapp-btn:hover {
+        transform: translateY(-3px) scale(1.1);
     }
 }
