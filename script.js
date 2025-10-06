@@ -120,21 +120,21 @@ document.addEventListener('keydown', (e) => {
 });
 
 // Touch/swipe support for mobile gallery
-let touchStartX = 0;
-let touchEndX = 0;
+let galleryTouchStartX = 0;
+let galleryTouchEndX = 0;
 
 modal.addEventListener('touchstart', (e) => {
-    touchStartX = e.changedTouches[0].screenX;
+    galleryTouchStartX = e.changedTouches[0].screenX;
 });
 
 modal.addEventListener('touchend', (e) => {
-    touchEndX = e.changedTouches[0].screenX;
-    handleSwipe();
+    galleryTouchEndX = e.changedTouches[0].screenX;
+    handleGallerySwipe();
 });
 
-function handleSwipe() {
+function handleGallerySwipe() {
     const swipeThreshold = 50;
-    const diff = touchStartX - touchEndX;
+    const diff = galleryTouchStartX - galleryTouchEndX;
     
     if (Math.abs(diff) > swipeThreshold) {
         if (diff > 0) {
@@ -156,19 +156,11 @@ contactForm.addEventListener('submit', (e) => {
     // Get form data
     const name = document.getElementById('name').value;
     const phone = document.getElementById('phone').value;
-    const email = document.getElementById('email').value;
     const message = document.getElementById('message').value;
     
     // Simple validation
-    if (!name || !phone || !email || !message) {
+    if (!name || !phone || !message) {
         alert('Lütfen tüm alanları doldurun.');
-        return;
-    }
-    
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        alert('Lütfen geçerli bir e-posta adresi girin.');
         return;
     }
     
@@ -179,22 +171,21 @@ contactForm.addEventListener('submit', (e) => {
         return;
     }
     
-    // Create mailto link
-    const subject = encodeURIComponent('Bulut Mermerit - Web Sitesi İletişim Formu');
-    const body = encodeURIComponent(
+    // Create WhatsApp link
+    const whatsappMessage = encodeURIComponent(
+        `Merhaba! Bulut Mermerit web sitesinden mesaj gönderiyorum:\n\n` +
         `Ad Soyad: ${name}\n` +
-        `Telefon: ${phone}\n` +
-        `E-posta: ${email}\n\n` +
-        `Mesaj:\n${message}`
+        `Telefon: ${phone}\n\n` +
+        `Mesajım:\n${message}`
     );
     
-    const mailtoLink = `mailto:emircanbulut04@gmail.com?subject=${subject}&body=${body}`;
+    const whatsappLink = `https://wa.me/905309748597?text=${whatsappMessage}`;
     
-    // Open email client
-    window.location.href = mailtoLink;
+    // Open WhatsApp
+    window.open(whatsappLink, '_blank');
     
     // Show success message
-    alert('E-posta uygulamanız açılacak. Mesajınızı göndermek için "Gönder" butonuna tıklayın.');
+    alert('WhatsApp uygulamanız açılacak. Mesajınızı göndermek için "Gönder" butonuna tıklayın.');
     
     // Reset form
     contactForm.reset();
@@ -233,25 +224,67 @@ let slides = [];
 let dots = [];
 let totalSlides = 0;
 let slideInterval;
+let isAutoSlideActive = true;
+let slideTransitionDuration = 3000; // 3 seconds for faster viewing
 
 function showSlide(index) {
+    console.log('Showing slide:', index);
+    
     // Remove active class from all slides and dots
-    slides.forEach(slide => slide.classList.remove('active'));
-    dots.forEach(dot => dot.classList.remove('active'));
+    slides.forEach((slide, i) => {
+        slide.classList.remove('active');
+        console.log('Removed active from slide', i);
+    });
+    dots.forEach((dot, i) => {
+        dot.classList.remove('active');
+        console.log('Removed active from dot', i);
+    });
     
     // Add active class to current slide and dot
-    if (slides[index]) slides[index].classList.add('active');
-    if (dots[index]) dots[index].classList.add('active');
+    if (slides[index]) {
+        slides[index].classList.add('active');
+        console.log('Added active to slide', index);
+    }
+    if (dots[index]) {
+        dots[index].classList.add('active');
+        console.log('Added active to dot', index);
+    }
+    
+    // Update current slide
+    currentSlide = index;
 }
 
 function nextSlide() {
-    currentSlide = (currentSlide + 1) % totalSlides;
-    showSlide(currentSlide);
+    const nextIndex = (currentSlide + 1) % totalSlides;
+    console.log('Moving from slide', currentSlide, 'to slide', nextIndex);
+    showSlide(nextIndex);
 }
 
 function prevSlide() {
-    currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
-    showSlide(currentSlide);
+    const prevIndex = (currentSlide - 1 + totalSlides) % totalSlides;
+    showSlide(prevIndex);
+}
+
+function startAutoSlide() {
+    if (slideInterval) {
+        clearInterval(slideInterval);
+    }
+    if (isAutoSlideActive && totalSlides > 1) {
+        slideInterval = setInterval(() => {
+            console.log('Auto sliding to next image...');
+            nextSlide();
+        }, slideTransitionDuration);
+        console.log('Auto slide interval set for', slideTransitionDuration, 'ms');
+    } else {
+        console.log('Auto slide not started - isActive:', isAutoSlideActive, 'totalSlides:', totalSlides);
+    }
+}
+
+function stopAutoSlide() {
+    if (slideInterval) {
+        clearInterval(slideInterval);
+        slideInterval = null;
+    }
 }
 
 function initSlider() {
@@ -259,20 +292,50 @@ function initSlider() {
     dots = document.querySelectorAll('.dot');
     totalSlides = slides.length;
     
-    if (totalSlides === 0) return;
+    console.log('Found slides:', slides.length);
+    console.log('Found dots:', dots.length);
     
-    // Auto slide functionality
-    slideInterval = setInterval(nextSlide, 4000); // Change slide every 4 seconds
+    if (totalSlides === 0) {
+        console.error('No slides found!');
+        return;
+    }
     
-    // Pause auto slide on hover
+    // Initialize first slide
+    showSlide(0);
+    
+    // Start auto slide
+    startAutoSlide();
+    console.log('Auto slide started with', slideTransitionDuration, 'ms interval');
+    
+    // Pause auto slide on hover/interaction
     const heroSection = document.querySelector('.hero');
     if (heroSection) {
+        // Mouse events
         heroSection.addEventListener('mouseenter', () => {
-            clearInterval(slideInterval);
+            stopAutoSlide();
         });
         
         heroSection.addEventListener('mouseleave', () => {
-            slideInterval = setInterval(nextSlide, 4000);
+            if (isAutoSlideActive) {
+                startAutoSlide();
+            }
+        });
+        
+        // Touch events for mobile
+        let touchStartTime = 0;
+        heroSection.addEventListener('touchstart', () => {
+            touchStartTime = Date.now();
+            stopAutoSlide();
+        });
+        
+        heroSection.addEventListener('touchend', () => {
+            const touchDuration = Date.now() - touchStartTime;
+            // Only restart if touch was brief (not a long press)
+            if (touchDuration < 500 && isAutoSlideActive) {
+                setTimeout(() => {
+                    startAutoSlide();
+                }, 2000); // Restart after 2 seconds
+            }
         });
     }
     
@@ -280,26 +343,39 @@ function initSlider() {
     dots.forEach((dot, index) => {
         dot.addEventListener('click', (e) => {
             e.preventDefault();
-            currentSlide = index;
-            showSlide(currentSlide);
-            clearInterval(slideInterval);
-            slideInterval = setInterval(nextSlide, 4000);
+            showSlide(index);
+            stopAutoSlide();
+            // Restart auto slide after 3 seconds
+            setTimeout(() => {
+                if (isAutoSlideActive) {
+                    startAutoSlide();
+                }
+            }, 3000);
         });
+    });
+    
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') {
+            prevSlide();
+            stopAutoSlide();
+            setTimeout(() => {
+                if (isAutoSlideActive) {
+                    startAutoSlide();
+                }
+            }, 3000);
+        } else if (e.key === 'ArrowRight') {
+            nextSlide();
+            stopAutoSlide();
+            setTimeout(() => {
+                if (isAutoSlideActive) {
+                    startAutoSlide();
+                }
+            }, 3000);
+        }
     });
 }
 
-// Keyboard navigation
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowLeft') {
-        prevSlide();
-        clearInterval(slideInterval);
-        slideInterval = setInterval(nextSlide, 4000);
-    } else if (e.key === 'ArrowRight') {
-        nextSlide();
-        clearInterval(slideInterval);
-        slideInterval = setInterval(nextSlide, 4000);
-    }
-});
 
 // Enhanced Touch/swipe support for mobile
 let touchStartX = 0;
@@ -307,6 +383,7 @@ let touchEndX = 0;
 let touchStartY = 0;
 let touchEndY = 0;
 let isScrolling = false;
+let touchStartTime = 0;
 
 function initTouchEvents() {
     const heroSection = document.querySelector('.hero');
@@ -315,8 +392,12 @@ function initTouchEvents() {
     heroSection.addEventListener('touchstart', (e) => {
         touchStartX = e.changedTouches[0].screenX;
         touchStartY = e.changedTouches[0].screenY;
+        touchStartTime = Date.now();
         isScrolling = false;
-    });
+        
+        // Stop auto slide on touch start
+        stopAutoSlide();
+    }, { passive: true });
 
     heroSection.addEventListener('touchmove', (e) => {
         if (!touchStartX || !touchStartY) return;
@@ -328,13 +409,28 @@ function initTouchEvents() {
         const diffY = Math.abs(touchStartY - touchEndY);
         
         // Determine if user is scrolling vertically or swiping horizontally
-        if (diffY > diffX) {
+        if (diffY > diffX && diffY > 10) {
             isScrolling = true;
         }
-    });
+        
+        // Prevent default if horizontal swipe detected
+        if (diffX > diffY && diffX > 20) {
+            e.preventDefault();
+        }
+    }, { passive: false });
 
     heroSection.addEventListener('touchend', (e) => {
-        if (!touchStartX || !touchEndX || isScrolling) return;
+        const touchDuration = Date.now() - touchStartTime;
+        
+        if (!touchStartX || !touchEndX || isScrolling) {
+            // Restart auto slide if it was a brief touch or scroll
+            if (touchDuration < 300 && isAutoSlideActive) {
+                setTimeout(() => {
+                    startAutoSlide();
+                }, 2000);
+            }
+            return;
+        }
         
         handleHeroSwipe();
         
@@ -344,14 +440,24 @@ function initTouchEvents() {
         touchStartY = 0;
         touchEndY = 0;
         isScrolling = false;
-    });
+        touchStartTime = 0;
+    }, { passive: true });
 }
 
 function handleHeroSwipe() {
-    const swipeThreshold = 30; // Reduced threshold for better mobile experience
+    const swipeThreshold = 50; // Optimal threshold for mobile experience
     const diff = touchStartX - touchEndX;
     
     if (Math.abs(diff) > swipeThreshold) {
+        // Add visual feedback
+        const heroSection = document.querySelector('.hero');
+        if (heroSection) {
+            heroSection.style.transform = 'scale(0.98)';
+            setTimeout(() => {
+                heroSection.style.transform = 'scale(1)';
+            }, 150);
+        }
+        
         if (diff > 0) {
             // Swipe left - next slide
             nextSlide();
@@ -359,8 +465,20 @@ function handleHeroSwipe() {
             // Swipe right - previous slide
             prevSlide();
         }
-        clearInterval(slideInterval);
-        slideInterval = setInterval(nextSlide, 4000);
+        stopAutoSlide();
+        // Restart auto slide after 4 seconds
+        setTimeout(() => {
+            if (isAutoSlideActive) {
+                startAutoSlide();
+            }
+        }, 4000);
+    } else {
+        // If swipe wasn't strong enough, restart auto slide sooner
+        setTimeout(() => {
+            if (isAutoSlideActive) {
+                startAutoSlide();
+            }
+        }, 1000);
     }
 }
 
@@ -446,21 +564,28 @@ document.addEventListener('DOMContentLoaded', () => {
     // Add loading class to body
     document.body.classList.add('loaded');
     
-    // Initialize slider
-    initSlider();
+    // Initialize slider with a small delay to ensure DOM is ready
+    setTimeout(() => {
+        initSlider();
+        console.log('Slider initialized with', totalSlides, 'slides');
+    }, 100);
     
     // Initialize touch events
     initTouchEvents();
     
     // Preload critical images
     const criticalImages = [
-        'örnekler/WhatsApp Görsel 2025-10-04 saat 23.12.15_e3c5e61a.jpg',
-        'örnekler/WhatsApp Görsel 2025-10-04 saat 23.12.53_8b581fc2.jpg'
+        'örnekler/WhatsApp Görsel 2025-10-04 saat 23.12.55_3bc21d6c.jpg',
+        'renkler/WhatsApp Görsel 2025-10-04 saat 23.12.11_df090213.jpg',
+        'renkler/WhatsApp Görsel 2025-10-04 saat 23.12.13_44aaa853.jpg',
+        'renkler/WhatsApp Görsel 2025-10-04 saat 23.11.52_18a609fa.jpg'
     ];
     
     criticalImages.forEach(src => {
         const img = new Image();
         img.src = src;
+        img.onload = () => console.log('Image loaded:', src);
+        img.onerror = () => console.error('Image failed to load:', src);
     });
 });
 
